@@ -1,40 +1,86 @@
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import * as Yup from 'yup'
+import { Field, Form, Formik } from 'formik'
 import { nanoid } from 'nanoid'
-import css from './ContactForm.module.css'
+import * as Yup from 'yup'
+import styles from './ContactForm.module.css'
+import clsx from 'clsx'
+import { useDispatch } from 'react-redux'
+import { addContact } from '../../redux/contactsSlice'
 
-const ContactForm = ({ onSubmit }) => {
-	const validationSchema = Yup.object().shape({
-		name: Yup.string().min(3).max(50).required(),
-		number: Yup.string().min(3).max(50).required(),
-	})
+const phoneRegExp =
+	/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
+const validationSchema = Yup.object().shape({
+	name: Yup.string()
+		.min(3, 'Too Short!')
+		.max(50, 'Too Long!')
+		.required('Required'),
+	number: Yup.string()
+		.matches(phoneRegExp, 'Phone number is not valid')
+		.min(10, 'Too Short!')
+		.max(12, 'Too Long!')
+		.required('Required'),
+})
+
+const ContactForm = () => {
+	const dispatch = useDispatch()
 	return (
 		<Formik
-			initialValues={{ name: '', number: '' }}
-			onSubmit={(values, actions) => {
-				onSubmit({
-					id: nanoid(),
-					name: values.name,
-					number: values.number,
-				})
-				actions.resetForm()
+			initialValues={{
+				name: '',
+				number: '',
 			}}
 			validationSchema={validationSchema}
+			onSubmit={(values, { resetForm }) => {
+				const id = nanoid()
+				const newContact = {
+					name: values.name,
+					number: values.number,
+					id: id,
+				}
+				dispatch(addContact(newContact))
+				resetForm()
+			}}
 		>
-			<Form>
-				<div>
-					<label htmlFor='name'>Name</label>
-					<Field type='text' id='name' name='name' />
-					<ErrorMessage name='name' component='span' />
-				</div>
-				<div>
-					<label htmlFor='number'>Number</label>
-					<Field type='text' id='number' name='number' />
-					<ErrorMessage name='number' component='span' />
-				</div>
-				<button type='submit'>Add contact</button>
-			</Form>
+			{({ errors, touched, values }) => (
+				<Form className={styles.form}>
+					<div className={styles.fieldBox}>
+						<label className={styles.label} htmlFor='name'>
+							Name
+						</label>
+						<Field
+							className={clsx(styles.field, {
+								[styles.error]: touched.name && errors.name,
+							})}
+							id='name'
+							name='name'
+							placeholder='Name'
+						/>
+						{touched.name && errors.name && (
+							<div className={styles.errorText}>{errors.name}</div>
+						)}
+					</div>
+
+					<div className={styles.fieldBox}>
+						<label className={styles.label} htmlFor='number'>
+							Number
+						</label>
+						<Field
+							className={clsx(styles.field, {
+								[styles.error]: touched.number && errors.number,
+							})}
+							id='number'
+							name='number'
+							placeholder='Number'
+						/>
+						{touched.number && errors.number && (
+							<div className={styles.errorText}>{errors.number}</div>
+						)}
+					</div>
+					<button type='submit' disabled={!values.name || !values.number}>
+						Submit
+					</button>
+				</Form>
+			)}
 		</Formik>
 	)
 }

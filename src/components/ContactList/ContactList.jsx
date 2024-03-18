@@ -1,13 +1,27 @@
+import { useSelector } from 'react-redux'
 import Contact from '../Contact/Contact'
-import css from './ContactList.module.css'
+import { selectContacts } from '../../redux/contactsSlice'
+import { selectNameFilter } from '../../redux/filtersSlice'
+import { useMemo } from 'react'
+import { toStandartRegister } from '../../redux/standart.js'
 
-const ContactList = ({ contacts, onDelete }) => {
+const ContactList = () => {
+	const name = useSelector(selectNameFilter)
+	const contacts = useSelector(selectContacts)
+
+	const filtredContacts = useMemo(() => {
+		if (!name) {
+			return contacts
+		}
+		return contacts.filter(el =>
+			toStandartRegister(el.name).includes(toStandartRegister(name))
+		)
+	}, [contacts, name])
+
 	return (
 		<ul>
-			{contacts.map(contact => (
-				<li key={contact.id}>
-					<Contact key={contact.id} contact={contact} onDelete={onDelete} />
-				</li>
+			{filtredContacts.map(contact => (
+				<Contact key={contact.id} contact={contact} />
 			))}
 		</ul>
 	)
