@@ -1,1 +1,1 @@
-export const toStandartRegister = value => value.toLocaleLowerCase()
+export const Register = value => value.toLocaleLowerCase()

@@ -37,7 +37,7 @@ const App = () => {
 
 	return (
 		<div className='app-container'>
-			<h1>Phonebook</h1>
+			<h1 className='title'>Phonebook</h1>
 			<ContactForm onSubmit={addContact} />
 			<SearchBox value={filter} onChange={handleFilterChange} />
 			<ContactList contacts={filteredContacts} onDelete={deleteContact} />

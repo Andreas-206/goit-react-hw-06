@@ -1,25 +1,10 @@
 import { Field, Form, Formik } from 'formik'
-import { nanoid } from 'nanoid'
-import * as Yup from 'yup'
-import styles from './ContactForm.module.css'
-import clsx from 'clsx'
 import { useDispatch } from 'react-redux'
 import { addContact } from '../../redux/contactsSlice'
-
-const phoneRegExp =
-	/^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
-
-const validationSchema = Yup.object().shape({
-	name: Yup.string()
-		.min(3, 'Too Short!')
-		.max(50, 'Too Long!')
-		.required('Required'),
-	number: Yup.string()
-		.matches(phoneRegExp, 'Phone number is not valid')
-		.min(10, 'Too Short!')
-		.max(12, 'Too Long!')
-		.required('Required'),
-})
+import { validationSchema } from '../../redux/validation'
+import css from './ContactForm.module.css'
+import { nanoid } from 'nanoid'
+import clsx from 'clsx'
 
 const ContactForm = () => {
 	const dispatch = useDispatch()
@@ -42,38 +27,36 @@ const ContactForm = () => {
 			}}
 		>
 			{({ errors, touched, values }) => (
-				<Form className={styles.form}>
-					<div className={styles.fieldBox}>
-						<label className={styles.label} htmlFor='name'>
+				<Form className={css.form}>
+					<div className={css.fieldBox}>
+						<label className={css.label} htmlFor='name'>
 							Name
 						</label>
 						<Field
-							className={clsx(styles.field, {
-								[styles.error]: touched.name && errors.name,
+							className={clsx(css.field, {
+								[css.error]: touched.name && errors.name,
 							})}
 							id='name'
 							name='name'
-							placeholder='Name'
 						/>
 						{touched.name && errors.name && (
-							<div className={styles.errorText}>{errors.name}</div>
+							<div className={css.errorText}>{errors.name}</div>
 						)}
 					</div>
 
-					<div className={styles.fieldBox}>
-						<label className={styles.label} htmlFor='number'>
+					<div className={css.fieldBox}>
+						<label className={css.label} htmlFor='number'>
 							Number
 						</label>
 						<Field
-							className={clsx(styles.field, {
-								[styles.error]: touched.number && errors.number,
+							className={clsx(css.field, {
+								[css.error]: touched.number && errors.number,
 							})}
 							id='number'
 							name='number'
-							placeholder='Number'
 						/>
 						{touched.number && errors.number && (
-							<div className={styles.errorText}>{errors.number}</div>
+							<div className={css.errorText}>{errors.number}</div>
 						)}
 					</div>
 					<button type='submit' disabled={!values.name || !values.number}>
