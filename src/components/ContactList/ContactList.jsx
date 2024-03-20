@@ -1,12 +1,12 @@
 import Contact from '../Contact/Contact'
 import { useSelector } from 'react-redux'
 import { selectContacts } from '../../redux/contactsSlice'
-import { selectNameFilter } from '../../redux/filtersSlice'
+// import { selectNameFilter } from '../../redux/filtersSlice'
 import { Register } from '../../redux/standart.js'
 import { useMemo } from 'react'
 
 const ContactList = () => {
-	const name = useSelector(selectNameFilter)
+	const name = useSelector(state => state.filters.name)
 	const contacts = useSelector(selectContacts)
 
 	const filterContacts = useMemo(() => {

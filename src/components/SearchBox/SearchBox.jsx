@@ -1,11 +1,11 @@
-import { changeFilter, selectNameFilter } from '../../redux/filtersSlice'
+import { changeFilter } from '../../redux/filtersSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { nanoid } from 'nanoid'
 import css from './SearchBox.module.css'
 
 const SearchBox = () => {
 	const dispatch = useDispatch()
-	const name = useSelector(selectNameFilter)
+	const name = useSelector(state => state.filters.name)
 	const id = nanoid()
 
 	return (
